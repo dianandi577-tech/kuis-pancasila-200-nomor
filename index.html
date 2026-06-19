@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Kuis</title>
+<style>
+body{
+    font-family: Arial, sans-serif;
+    margin:0;
+    background:#f2f2f2;
+}
+
+.container{
+    width:100%;
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    margin-top:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+button{
+    padding:10px;
+    border:none;
+    background:#2d6cdf;
+    color:white;
+    border-radius:5px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+}
+
+.menu button{
+    margin-right:10px;
+}
+
+.hidden{display:none;}
+
+h1,h2{text-align:center;}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- LOGIN -->
+<div id="loginBox" class="card">
+    <h2>LOGIN SISWA</h2>
+    <input type="text" id="nim" placeholder="Masukkan NIM">
+    <input type="password" id="pass" placeholder="Masukkan Password">
+    <button onclick="login()">Masuk</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+
+    <div class="card">
+        <h1>🎓 SELAMAT DATANG</h1>
+        <p id="userInfo"></p>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <div class="card menu">
+        <button onclick="showMenu('kuis1')">Kuis 1</button>
+        <button onclick="showMenu('kuis2')">Kuis 2</button>
+        <button onclick="showMenu('rekap')">Rekap Nilai</button>
+    </div>
+
+    <!-- KUIS 1 -->
+    <div id="kuis1" class="card hidden">
+        <h2>KUIS 1</h2>
+        <p>1. Ibukota Indonesia?</p>
+        <input id="q1">
+        <button onclick="submitKuis1()">Submit</button>
+    </div>
+
+    <!-- KUIS 2 -->
+    <div id="kuis2" class="card hidden">
+        <h2>KUIS 2</h2>
+        <p>1. 2 + 2 = ?</p>
+        <input id="q2">
+        <button onclick="submitKuis2()">Submit</button>
+    </div>
+
+    <!-- REKAP -->
+    <div id="rekap" class="card hidden">
+        <h2>REKAP NILAI</h2>
+        <p id="hasilRekap"></p>
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+// akun sederhana (bisa kamu ubah)
+const USER = {
+    nim: "12345",
+    pass: "12345"
+};
+
+function login(){
+    let nim = document.getElementById("nim").value;
+    let pass = document.getElementById("pass").value;
+
+    if(nim === USER.nim && pass === USER.pass){
+        localStorage.setItem("login", "true");
+        localStorage.setItem("nim", nim);
+
+        document.getElementById("loginBox").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+
+        document.getElementById("userInfo").innerText =
+        "NIM: " + nim + " | Selamat datang di Dashboard";
+    }else{
+        alert("NIM atau Password salah!");
+    }
+}
+
+function logout(){
+    localStorage.clear();
+    location.reload();
+}
+
+function showMenu(menu){
+    document.getElementById("kuis1").classList.add("hidden");
+    document.getElementById("kuis2").classList.add("hidden");
+    document.getElementById("rekap").classList.add("hidden");
+
+    document.getElementById(menu).classList.remove("hidden");
+
+    if(menu === "rekap"){
+        let n1 = localStorage.getItem("nilai1") || 0;
+        let n2 = localStorage.getItem("nilai2") || 0;
+
+        document.getElementById("hasilRekap").innerHTML =
+        "Nilai Kuis 1: " + n1 + "<br>Nilai Kuis 2: " + n2;
+    }
+}
+
+function submitKuis1(){
+    let jawaban = document.getElementById("q1").value.toLowerCase();
+    let nilai = (jawaban === "jakarta") ? 100 : 0;
+
+    localStorage.setItem("nilai1", nilai);
+    alert("Nilai Kuis 1: " + nilai);
+}
+
+function submitKuis2(){
+    let jawaban = document.getElementById("q2").value;
+    let nilai = (jawaban == "4") ? 100 : 0;
+
+    localStorage.setItem("nilai2", nilai);
+    alert("Nilai Kuis 2: " + nilai);
+}
+
+// auto login jika sudah masuk
+if(localStorage.getItem("login") === "true"){
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+
+    let nim = localStorage.getItem("nim");
+
+    document.getElementById("userInfo").innerText =
+    "NIM: " + nim + " | Selamat datang di Dashboard";
+}
+
+</script>
+
+</body>
+</html>
